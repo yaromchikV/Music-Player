@@ -60,8 +60,8 @@ class MainActivityViewModel(private val repository: Repository) : ViewModel() {
 
     private fun jobLauncher() = viewModelScope.launch {
         while (true) {
-            _currentPosition.postValue(mediaPlayer.currentPosition)
-            delay(500)
+            _currentPosition.value = mediaPlayer.currentPosition
+            delay(1000)
         }
     }
 
@@ -93,14 +93,16 @@ class MainActivityViewModel(private val repository: Repository) : ViewModel() {
     private fun prepareNewTrack() {
         mediaPlayer.stop()
         mediaPlayer.release()
+        _currentPosition.postValue(0)
+
         mediaPlayer = repository.mediaPlayerInstance(_currentTrack.value!!.trackUri)
         mediaPlayer.setOnBufferingUpdateListener { _, progress ->
             _loadProgress.postValue(mediaPlayer.duration * progress / 100L)
         }
 
-        _currentPosition.postValue(0)
         if (_musicIsPlaying.value == true)
             mediaPlayer.start()
+
     }
 
     fun seekBarWasTouched(currentPosition: Int, maxPosition: Int) {
