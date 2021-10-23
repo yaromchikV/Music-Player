@@ -5,6 +5,5 @@ data class Song(
     val title: String = "",
     val artist: String = "",
     val bitmapUri: String = "",
-    val trackUri: String = "",
-    val duration: Long = 0L
+    val trackUri: String = ""
 )

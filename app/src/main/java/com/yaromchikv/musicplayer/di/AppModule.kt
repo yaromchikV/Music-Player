@@ -6,11 +6,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.yaromchikv.musicplayer.R
 import com.yaromchikv.musicplayer.data.MusicRepository
+import com.yaromchikv.musicplayer.player.MusicServiceConnection
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ServiceScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -20,9 +20,15 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun providesMusicRepository(
+    fun provideMusicRepository(
         @ApplicationContext context: Context
     ) = MusicRepository(context)
+
+    @Singleton
+    @Provides
+    fun provideMusicServiceConnection(
+        @ApplicationContext context: Context
+    ) = MusicServiceConnection(context)
 
     @Singleton
     @Provides
