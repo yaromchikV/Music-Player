@@ -1,13 +1,15 @@
 package com.yaromchikv.musicplayer.di
 
+import android.app.Application
 import android.content.Context
+import android.content.res.AssetManager
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.yaromchikv.musicplayer.R
-import com.yaromchikv.musicplayer.data.MusicRepository
+import com.yaromchikv.musicplayer.data.SongPlaylist
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,9 +23,11 @@ object ServiceModule {
 
     @ServiceScoped
     @Provides
-    fun providesMusicRepository(
-        @ApplicationContext context: Context
-    ) = MusicRepository(context)
+    fun provideAssetManager(app: Application): AssetManager = app.assets
+
+    @ServiceScoped
+    @Provides
+    fun provideSongPlaylist(assetManager: AssetManager) = SongPlaylist(assetManager)
 
     @ServiceScoped
     @Provides
@@ -50,5 +54,4 @@ object ServiceModule {
         context,
         Util.getUserAgent(context, context.getString(R.string.app_name))
     )
-
 }

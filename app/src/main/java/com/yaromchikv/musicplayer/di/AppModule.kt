@@ -1,11 +1,13 @@
 package com.yaromchikv.musicplayer.di
 
+import android.app.Application
 import android.content.Context
+import android.content.res.AssetManager
+import android.content.res.Resources
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.yaromchikv.musicplayer.R
-import com.yaromchikv.musicplayer.data.MusicRepository
 import com.yaromchikv.musicplayer.player.MusicServiceConnection
 import dagger.Module
 import dagger.Provides
@@ -17,12 +19,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    @Singleton
-    @Provides
-    fun provideMusicRepository(
-        @ApplicationContext context: Context
-    ) = MusicRepository(context)
 
     @Singleton
     @Provides

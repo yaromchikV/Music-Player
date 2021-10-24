@@ -1,4 +1,4 @@
-package com.yaromchikv.musicplayer.ui
+package com.yaromchikv.musicplayer.ui.viewmodels
 
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_ID
@@ -7,11 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.yaromchikv.musicplayer.data.Song
 import com.yaromchikv.musicplayer.player.MusicServiceConnection
-import com.yaromchikv.musicplayer.player.isPlayEnabled
-import com.yaromchikv.musicplayer.player.isPlaying
-import com.yaromchikv.musicplayer.player.isPrepared
 import com.yaromchikv.musicplayer.utils.Constants.MEDIA_ROOT_ID
 import com.yaromchikv.musicplayer.utils.Resource
+import com.yaromchikv.musicplayer.utils.isPlayEnabled
+import com.yaromchikv.musicplayer.utils.isPlaying
+import com.yaromchikv.musicplayer.utils.isPrepared
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -41,7 +41,7 @@ class MainViewModel @Inject constructor(
                     super.onChildrenLoaded(parentId, children)
                     val items = children.map {
                         Song(
-                            it.mediaId!!.toInt(),
+                            it.mediaId?.toInt() ?: 0,
                             it.description.title.toString(),
                             it.description.subtitle.toString(),
                             it.description.iconUri.toString(),

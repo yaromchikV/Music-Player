@@ -18,20 +18,20 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.yaromchikv.musicplayer.data.MusicRepository
+import com.yaromchikv.musicplayer.data.SongPlaylist
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MusicSource @Inject constructor(
-    private val musicRepository: MusicRepository
+    private val songPlaylist: SongPlaylist
 ) {
 
     var songs = emptyList<MediaMetadataCompat>()
 
     suspend fun fetchMediaData() = withContext(Dispatchers.IO) {
         state = State.INITIALIZING
-        val allSongs = musicRepository.getAllSongs()
+        val allSongs = songPlaylist.catalog
         songs = allSongs.map { song ->
             MediaMetadataCompat.Builder()
                 .putString(METADATA_KEY_MEDIA_ID, song.id.toString())

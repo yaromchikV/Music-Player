@@ -4,45 +4,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.MainActivity">
+    tools:context=".ui.fragments.SongFragment">
 
     <ImageView
-        android:id="@+id/trackImage"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
+        android:id="@+id/songImage"
+        android:layout_width="256dp"
+        android:layout_height="256dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="84dp"
         android:elevation="4dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginBottom="24dp"
         android:outlineProvider="bounds"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar"
-        app:layout_constraintStart_toStartOf="@+id/seekBar"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@drawable/music_placeholder" />
 
     <TextView
-        android:id="@+id/trackTitle"
+        android:id="@+id/songTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_margin="36dp"
+        android:ellipsize="end"
         android:fontFamily="@font/nexa_bold"
-        android:text="Unstable Remix"
+        android:maxLines="1"
+        android:paddingStart="36dp"
+        android:paddingEnd="36dp"
+        android:textAlignment="center"
         android:textColor="@color/black"
-        android:textSize="24sp"
+        android:textSize="32sp"
         app:fontFamily="@font/nexa_bold"
-        app:layout_constraintStart_toEndOf="@+id/trackImage"
-        app:layout_constraintTop_toTopOf="@+id/trackImage" />
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/songImage"
+        tools:text="This is a title" />
 
     <TextView
-        android:id="@+id/trackArtist"
+        android:id="@+id/songArtist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:text="Mr. Kitty"
-        android:textSize="14sp"
-        app:layout_constraintStart_toEndOf="@+id/trackImage"
-        app:layout_constraintTop_toBottomOf="@+id/trackTitle" />
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingStart="36dp"
+        android:paddingEnd="36dp"
+        android:textAlignment="center"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/songTitle"
+        tools:text="Mr. Kitty" />
 
     <SeekBar
         android:id="@+id/seekBar"
@@ -50,20 +61,19 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
         android:layout_marginEnd="36dp"
-        android:layout_marginTop="64dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/playPauseButton"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/songArtist" />
 
     <TextView
         android:id="@+id/currentTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="00:00"
+        android:text="@string/zero"
         android:textColor="?attr/colorPrimary"
-        app:layout_constraintStart_toStartOf="@+id/seekBar"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@+id/seekBar" />
 
     <TextView
@@ -71,21 +81,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="00:00"
+        android:text="@string/zero"
         android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="@+id/seekBar"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintTop_toBottomOf="@+id/seekBar" />
 
     <ImageButton
         android:id="@+id/playPauseButton"
         android:layout_width="72dp"
         android:layout_height="72dp"
+        android:layout_marginBottom="50dp"
         android:background="@android:color/transparent"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:srcCompat="@drawable/ic_play_circle" />
 
     <ImageButton
@@ -111,5 +121,33 @@
         app:layout_constraintEnd_toStartOf="@+id/playPauseButton"
         app:layout_constraintTop_toTopOf="@+id/playPauseButton"
         app:srcCompat="@drawable/ic_skip_previous" />
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:alpha="0.5"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toTopOf="@+id/songImage"
+        app:layout_constraintEnd_toStartOf="@+id/songImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_down" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="36dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="36dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

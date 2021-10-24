@@ -8,17 +8,18 @@ import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.media.MediaBrowserServiceCompat
+import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.yaromchikv.musicplayer.utils.Constants.MEDIA_ROOT_ID
-import com.yaromchikv.musicplayer.utils.Constants.MUSIC_SERVICE_TAG
 import com.yaromchikv.musicplayer.player.callbacks.MusicPlaybackPreparer
 import com.yaromchikv.musicplayer.player.callbacks.MusicPlayerEventListener
-import com.yaromchikv.musicplayer.player.callbacks.MusicPlayerNotificationListener
+import com.yaromchikv.musicplayer.utils.Constants.MEDIA_ROOT_ID
+import com.yaromchikv.musicplayer.utils.Constants.MUSIC_SERVICE_TAG
 import com.yaromchikv.musicplayer.utils.Constants.NETWORK_ERROR
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -26,6 +27,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MusicService : MediaBrowserServiceCompat() {
 
     @Inject
@@ -77,10 +79,9 @@ class MusicService : MediaBrowserServiceCompat() {
 
         musicNotificationManager = MusicNotificationManager(
             this,
-            mediaSession.sessionToken,
-            MusicPlayerNotificationListener(this)
+            mediaSession.sessionToken
         ) {
-            currentSongDuration = exoPlayer.duration
+            currentSongDuration = if (exoPlayer.duration != C.TIME_UNSET) exoPlayer.duration else 0
         }
 
         val musicPlaybackPreparer = MusicPlaybackPreparer(musicSource) {
