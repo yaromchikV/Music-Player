@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.RequestManager
@@ -26,9 +25,6 @@ class SongFragment : Fragment(R.layout.fragment_song) {
 
     private val binding: FragmentSongBinding by viewBinding()
 
-    @Inject
-    lateinit var glide: RequestManager
-
     private val mainViewModel: MainViewModel by viewModels()
     private val songViewModel: SongViewModel by viewModels()
 
@@ -36,48 +32,57 @@ class SongFragment : Fragment(R.layout.fragment_song) {
 
     private var shouldUpdateSeekbar = true
 
+    @Inject
+    lateinit var glide: RequestManager
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         subscribeToObservers()
 
-        binding.playPauseButton.setOnClickListener {
-            currentPlayingSong?.let {
-                mainViewModel.playOrToggleSong(it, true)
-            }
-        }
-
-        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    binding.currentTime.text = progress.toLong().toTimeFormat()
-                } else {
-                    binding.seekBar.progress =
-                        songViewModel.currentPlayerPosition.value?.toInt() ?: 0
+        with(binding) {
+            playPauseButton.setOnClickListener {
+                currentPlayingSong?.let {
+                    mainViewModel.playOrToggleSong(it, true)
                 }
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                shouldUpdateSeekbar = false
+            prevButton.setOnClickListener {
+                mainViewModel.skipToPreviousSong()
             }
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                seekBar?.let {
-                    mainViewModel.seekTo(it.progress.toLong())
+            nextButton.setOnClickListener {
+                mainViewModel.skipToNextSong()
+            }
+
+            backButton.setOnClickListener {
+                findNavController().popBackStack()
+            }
+
+            seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    if (fromUser) {
+                        binding.currentTime.text = progress.toLong().toTimeFormat()
+                    } else {
+                        binding.seekBar.progress =
+                            songViewModel.currentPlayerPosition.value?.toInt() ?: 0
+                    }
                 }
-                shouldUpdateSeekbar = true
-            }
-        })
 
-        binding.prevButton.setOnClickListener {
-            mainViewModel.skipToPreviousSong()
-        }
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                    shouldUpdateSeekbar = false
+                }
 
-        binding.nextButton.setOnClickListener {
-            mainViewModel.skipToNextSong()
-        }
-
-        binding.backButton.setOnClickListener {
-            findNavController().popBackStack()
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                    seekBar?.let {
+                        mainViewModel.seekTo(it.progress.toLong())
+                    }
+                    shouldUpdateSeekbar = true
+                }
+            })
         }
     }
 
@@ -133,21 +138,3 @@ class SongFragment : Fragment(R.layout.fragment_song) {
         })
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

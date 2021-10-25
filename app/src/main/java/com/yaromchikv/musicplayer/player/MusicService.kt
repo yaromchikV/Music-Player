@@ -31,38 +31,30 @@ import javax.inject.Inject
 class MusicService : MediaBrowserServiceCompat() {
 
     @Inject
-    lateinit var dataSourceFactory: DefaultDataSourceFactory
-
-    @Inject
     lateinit var exoPlayer: SimpleExoPlayer
 
     @Inject
     lateinit var musicSource: MusicSource
 
-    private lateinit var musicNotificationManager: MusicNotificationManager
+    @Inject
+    lateinit var dataSourceFactory: DefaultDataSourceFactory
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
     private lateinit var mediaSession: MediaSessionCompat
+    private lateinit var musicNotificationManager: MusicNotificationManager
     private lateinit var mediaSessionConnector: MediaSessionConnector
+    private val musicPlayerEventListener: MusicPlayerEventListener by lazy {
+        MusicPlayerEventListener(this)
+    }
 
     var isForegroundService: Boolean = false
-
-    private var currentPlayingSong: MediaMetadataCompat? = null
-
     private var isPlayerInitialized = false
-
-    private lateinit var musicPlayerEventListener: MusicPlayerEventListener
-
-    companion object {
-        var currentSongDuration = 0L
-            private set
-    }
+    private var currentPlayingSong: MediaMetadataCompat? = null
 
     override fun onCreate() {
         super.onCreate()
-
         serviceScope.launch {
             musicSource.fetchMediaData()
         }
@@ -75,35 +67,24 @@ class MusicService : MediaBrowserServiceCompat() {
             setSessionActivity(activityIntent)
             isActive = true
         }
+
         sessionToken = mediaSession.sessionToken
 
-        musicNotificationManager = MusicNotificationManager(
-            this,
-            mediaSession.sessionToken
-        ) {
+        musicNotificationManager = MusicNotificationManager(this, mediaSession.sessionToken) {
             currentSongDuration = if (exoPlayer.duration != C.TIME_UNSET) exoPlayer.duration else 0
         }
 
-        val musicPlaybackPreparer = MusicPlaybackPreparer(musicSource) {
-            currentPlayingSong = it
-            preparePlayer(musicSource.songs, it, true)
+        mediaSessionConnector = MediaSessionConnector(mediaSession).apply {
+            setPlaybackPreparer(MusicPlaybackPreparer(musicSource) {
+                currentPlayingSong = it
+                preparePlayer(musicSource.songs, it, true)
+            })
+            setQueueNavigator(MusicQueueNavigator())
+            setPlayer(exoPlayer)
         }
 
-        mediaSessionConnector = MediaSessionConnector(mediaSession)
-        mediaSessionConnector.setPlaybackPreparer(musicPlaybackPreparer)
-        mediaSessionConnector.setQueueNavigator(MusicQueueNavigator())
-        mediaSessionConnector.setPlayer(exoPlayer)
-
-        musicPlayerEventListener = MusicPlayerEventListener(this)
         exoPlayer.addListener(musicPlayerEventListener)
         musicNotificationManager.showNotification(exoPlayer)
-    }
-
-    private inner class MusicQueueNavigator : TimelineQueueNavigator(mediaSession) {
-        override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat {
-            return musicSource.songs[windowIndex].description
-        }
-
     }
 
     private fun preparePlayer(
@@ -112,10 +93,12 @@ class MusicService : MediaBrowserServiceCompat() {
         playNow: Boolean
     ) {
         val currentSongIndex = if (currentPlayingSong != null) songs.indexOf(itemToPlay) else 0
-        exoPlayer.setMediaSource(musicSource.asMediaSource(dataSourceFactory))
-        exoPlayer.prepare()
-        exoPlayer.seekTo(currentSongIndex, 0L)
-        exoPlayer.playWhenReady = playNow
+        exoPlayer.run {
+            setMediaSource(musicSource.asMediaSource(dataSourceFactory))
+            prepare()
+            seekTo(currentSongIndex, 0L)
+            playWhenReady = playNow
+        }
     }
 
     override fun onGetRoot(
@@ -159,8 +142,18 @@ class MusicService : MediaBrowserServiceCompat() {
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
-
         exoPlayer.removeListener(musicPlayerEventListener)
         exoPlayer.release()
+    }
+
+    companion object {
+        var currentSongDuration = 0L
+            private set
+    }
+
+    private inner class MusicQueueNavigator : TimelineQueueNavigator(mediaSession) {
+        override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat {
+            return musicSource.songs[windowIndex].description
+        }
     }
 }

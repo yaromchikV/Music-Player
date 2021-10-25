@@ -12,12 +12,33 @@ buildscript {
     }
 }
 
+plugins {
+    id("io.gitlab.arturbosch.detekt").version("1.18.1")
+}
+
 allprojects {
     repositories {
         google()
         mavenCentral()
     }
 }
+
+detekt {
+    toolVersion = "1.18.0"
+    config = files("config/detekt-config.yml")
+    allRules = true
+    autoCorrect = true
+
+    source = files("app/src/main/java", "app/src/main/kotlin")
+
+    reports {
+        html {
+            enabled = true
+            destination = file("app/build/detekt/detekt.html")
+        }
+    }
+}
+tasks.detekt.jvmTarget = "1.8"
 
 task clean(type: Delete) {
     delete rootProject.buildDir

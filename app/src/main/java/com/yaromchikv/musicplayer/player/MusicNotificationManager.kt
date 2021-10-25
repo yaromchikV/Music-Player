@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.util.Log
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -66,6 +67,7 @@ class MusicNotificationManager(
 
         override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
             super.onNotificationCancelled(notificationId, dismissedByUser)
+            Log.d("!!!", "cancelled")
             musicService.apply {
                 stopForeground(true)
                 isForegroundService = false
@@ -77,6 +79,8 @@ class MusicNotificationManager(
     private inner class DescriptionAdapter(
         private val mediaController: MediaControllerCompat
     ) : PlayerNotificationManager.MediaDescriptionAdapter {
+
+        private var currentBitmap: Bitmap? = null
 
         override fun getCurrentContentTitle(player: Player): CharSequence {
             newSongCallback()
@@ -90,8 +94,6 @@ class MusicNotificationManager(
         override fun getCurrentContentText(player: Player): CharSequence {
             return mediaController.metadata.description.subtitle.toString()
         }
-
-        private var currentBitmap: Bitmap? = null
 
         override fun getCurrentLargeIcon(
             player: Player,

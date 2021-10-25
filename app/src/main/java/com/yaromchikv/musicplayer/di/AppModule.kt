@@ -2,8 +2,6 @@ package com.yaromchikv.musicplayer.di
 
 import android.app.Application
 import android.content.Context
-import android.content.res.AssetManager
-import android.content.res.Resources
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -19,6 +17,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideAppContext(app: Application): Context = app.applicationContext
 
     @Singleton
     @Provides

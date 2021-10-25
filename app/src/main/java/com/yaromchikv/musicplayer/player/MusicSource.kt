@@ -29,6 +29,22 @@ class MusicSource @Inject constructor(
 
     var songs = emptyList<MediaMetadataCompat>()
 
+    private val onReadyListeners = mutableListOf<(Boolean) -> Unit>()
+
+    private var state: State = State.CREATED
+        set(value) {
+            if (value == State.INITIALIZED || value == State.ERROR) {
+                synchronized(onReadyListeners) {
+                    field = value
+                    onReadyListeners.forEach { listener ->
+                        listener(state == State.INITIALIZED)
+                    }
+                }
+            } else {
+                field = value
+            }
+        }
+
     suspend fun fetchMediaData() = withContext(Dispatchers.IO) {
         state = State.INITIALIZING
         val allSongs = songPlaylist.catalog
@@ -46,6 +62,16 @@ class MusicSource @Inject constructor(
                 .build()
         }
         state = State.INITIALIZED
+    }
+
+    fun whenReady(action: (Boolean) -> Unit): Boolean {
+        return if (state == State.CREATED || state == State.INITIALIZING) {
+            onReadyListeners += action
+            false
+        } else {
+            action(state == State.INITIALIZED)
+            true
+        }
     }
 
     fun asMediaSource(dataSourceFactory: DefaultDataSourceFactory): ConcatenatingMediaSource {
@@ -72,32 +98,6 @@ class MusicSource @Inject constructor(
             .build()
         MediaBrowserCompat.MediaItem(desc, FLAG_PLAYABLE)
     }.toMutableList()
-
-    private val onReadyListeners = mutableListOf<(Boolean) -> Unit>()
-
-    private var state: State = State.CREATED
-        set(value) {
-            if (value == State.INITIALIZED || value == State.ERROR) {
-                synchronized(onReadyListeners) {
-                    field = value
-                    onReadyListeners.forEach { listener ->
-                        listener(state == State.INITIALIZED)
-                    }
-                }
-            } else {
-                field = value
-            }
-        }
-
-    fun whenReady(action: (Boolean) -> Unit): Boolean {
-        return if (state == State.CREATED || state == State.INITIALIZING) {
-            onReadyListeners += action
-            false
-        } else {
-            action(state == State.INITIALIZED)
-            true
-        }
-    }
 }
 
 enum class State {

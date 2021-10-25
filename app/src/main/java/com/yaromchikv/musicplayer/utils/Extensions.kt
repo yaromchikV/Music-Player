@@ -1,17 +1,13 @@
 package com.yaromchikv.musicplayer.utils
 
-import android.content.Context
 import android.os.SystemClock
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.util.TypedValue
-import androidx.annotation.AttrRes
-import androidx.annotation.ColorInt
 import com.yaromchikv.musicplayer.data.Song
 import java.text.SimpleDateFormat
 import java.util.*
 
-inline val PlaybackStateCompat.isPrepared
+val PlaybackStateCompat.isPrepared
     get() = state == PlaybackStateCompat.STATE_BUFFERING ||
             state == PlaybackStateCompat.STATE_PLAYING ||
             state == PlaybackStateCompat.STATE_PAUSED
@@ -46,14 +42,4 @@ fun MediaMetadataCompat.toSong(): Song? {
 fun Long.toTimeFormat(): String {
     val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
     return dateFormat.format(this)
-}
-
-@ColorInt
-fun Context.getColorFromAttr(
-    @AttrRes attrColor: Int,
-    typedValue: TypedValue = TypedValue(),
-    resolveRefs: Boolean = true
-): Int {
-    theme.resolveAttribute(attrColor, typedValue, resolveRefs)
-    return typedValue.data
 }

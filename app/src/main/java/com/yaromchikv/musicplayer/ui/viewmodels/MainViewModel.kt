@@ -53,18 +53,6 @@ class MainViewModel @Inject constructor(
             })
     }
 
-    fun skipToNextSong() {
-        musicServiceConnection.transportControls.skipToNext()
-    }
-
-    fun skipToPreviousSong() {
-        musicServiceConnection.transportControls.skipToPrevious()
-    }
-
-    fun seekTo(position: Long) {
-        musicServiceConnection.transportControls.seekTo(position)
-    }
-
     fun playOrToggleSong(mediaItem: Song, toggle: Boolean = false) {
         val isPrepared = playbackState.value?.isPrepared ?: false
         if (isPrepared && mediaItem.id.toString() ==
@@ -82,6 +70,18 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun skipToNextSong() {
+        musicServiceConnection.transportControls.skipToNext()
+    }
+
+    fun skipToPreviousSong() {
+        musicServiceConnection.transportControls.skipToPrevious()
+    }
+
+    fun seekTo(position: Long) {
+        musicServiceConnection.transportControls.seekTo(position)
+    }
+
     override fun onCleared() {
         super.onCleared()
         musicServiceConnection.unsubscribe(
@@ -89,17 +89,3 @@ class MainViewModel @Inject constructor(
             object : MediaBrowserCompat.SubscriptionCallback() {})
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
