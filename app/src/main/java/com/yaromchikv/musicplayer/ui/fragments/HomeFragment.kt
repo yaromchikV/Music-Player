@@ -3,6 +3,7 @@ package com.yaromchikv.musicplayer.ui.fragments
 import android.os.Bundle
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -68,14 +69,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         mainViewModel.mediaItems.observe(viewLifecycleOwner, { result ->
             when (result.status) {
                 Status.SUCCESS -> {
-                    // ProgressBar is invisible
+                    binding.progressBar?.isVisible = false
                     result.data?.let { songs ->
                         songListAdapter.songs = songs
                     }
                 }
-                Status.LOADING -> {
-                    // ProgressBar is visible
-                }
+                Status.LOADING -> binding.progressBar?.isVisible = true
                 Status.ERROR -> Unit
             }
         })
