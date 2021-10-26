@@ -7,7 +7,6 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
-import android.util.Log
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -44,6 +43,10 @@ class MusicNotificationManager(
         notificationManager.setPlayer(player)
     }
 
+    fun removeNotification() {
+        notificationManager.setPlayer(null)
+    }
+
     private inner class MusicPlayerNotificationListener :
         PlayerNotificationManager.NotificationListener {
 
@@ -67,7 +70,6 @@ class MusicNotificationManager(
 
         override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
             super.onNotificationCancelled(notificationId, dismissedByUser)
-            Log.d("!!!", "cancelled")
             musicService.apply {
                 stopForeground(true)
                 isForegroundService = false

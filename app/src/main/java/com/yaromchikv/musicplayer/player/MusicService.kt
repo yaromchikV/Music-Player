@@ -7,6 +7,7 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.util.Log
 import androidx.media.MediaBrowserServiceCompat
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.Player
@@ -55,6 +56,8 @@ class MusicService : MediaBrowserServiceCompat() {
 
     override fun onCreate() {
         super.onCreate()
+        Log.d("!!!", "onCreate")
+
         serviceScope.launch {
             musicSource.fetchMediaData()
         }
@@ -137,6 +140,7 @@ class MusicService : MediaBrowserServiceCompat() {
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         exoPlayer.stop()
+        musicNotificationManager.removeNotification()
     }
 
     override fun onDestroy() {
