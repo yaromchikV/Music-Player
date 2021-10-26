@@ -41,7 +41,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         setupRecyclerView()
         subscribeToObservers()
 
-        songListAdapter.setOnItemClickListener { mainViewModel.playOrToggleSong(it) }
+        songListAdapter.setOnItemClickListener {
+            mainViewModel.playOrToggleSong(it, true)
+        }
 
         binding.bottomBar.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionListFragmentToSongFragment())
