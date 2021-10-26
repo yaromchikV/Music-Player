@@ -7,16 +7,16 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
-import android.util.Log
+import android.widget.Toast
 import androidx.media.MediaBrowserServiceCompat
 import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.yaromchikv.musicplayer.player.callbacks.MusicPlaybackPreparer
-import com.yaromchikv.musicplayer.player.callbacks.MusicPlayerEventListener
+import com.yaromchikv.musicplayer.R
 import com.yaromchikv.musicplayer.utils.Constants.MEDIA_ROOT_ID
 import com.yaromchikv.musicplayer.utils.Constants.MUSIC_SERVICE_TAG
 import com.yaromchikv.musicplayer.utils.Constants.NETWORK_ERROR
@@ -47,7 +47,7 @@ class MusicService : MediaBrowserServiceCompat() {
     private lateinit var musicNotificationManager: MusicNotificationManager
     private lateinit var mediaSessionConnector: MediaSessionConnector
     private val musicPlayerEventListener: MusicPlayerEventListener by lazy {
-        MusicPlayerEventListener(this)
+        MusicPlayerEventListener()
     }
 
     var isForegroundService: Boolean = false
@@ -56,8 +56,6 @@ class MusicService : MediaBrowserServiceCompat() {
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("!!!", "onCreate")
-
         serviceScope.launch {
             musicSource.fetchMediaData()
         }
@@ -153,6 +151,24 @@ class MusicService : MediaBrowserServiceCompat() {
     companion object {
         var currentSongDuration = 0L
             private set
+    }
+
+    private inner class MusicPlayerEventListener : Player.Listener {
+
+        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+            if (playbackState == Player.STATE_READY && !playWhenReady) {
+                stopForeground(false)
+            }
+        }
+
+        override fun onPlayerError(error: PlaybackException) {
+            super.onPlayerError(error)
+            Toast.makeText(
+                this@MusicService,
+                getString(R.string.unknown_error_message),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     private inner class MusicQueueNavigator : TimelineQueueNavigator(mediaSession) {

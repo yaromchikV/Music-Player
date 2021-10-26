@@ -1,4 +1,4 @@
-package com.yaromchikv.musicplayer.player.callbacks
+package com.yaromchikv.musicplayer.player
 
 import android.net.Uri
 import android.os.Bundle
@@ -8,7 +8,6 @@ import android.support.v4.media.session.PlaybackStateCompat
 import com.google.android.exoplayer2.ControlDispatcher
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
-import com.yaromchikv.musicplayer.player.MusicSource
 
 class MusicPlaybackPreparer(
     private val musicSource: MusicSource,

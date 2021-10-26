@@ -19,15 +19,17 @@ class SongPlaylist @Inject constructor(
     }
 
     private fun initPlaylistFromJson() {
-        val file = "music.json"
-
         val moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
         val arrayType = Types.newParameterizedType(List::class.java, Song::class.java)
         val adapter: JsonAdapter<List<Song>> = moshi.adapter(arrayType)
-        val myJson = assetManager.open(file).bufferedReader().use { it.readText() }
+        val myJson = assetManager.open(FILE_NAME).bufferedReader().use { it.readText() }
 
         _catalog = adapter.fromJson(myJson)
+    }
+
+    companion object {
+        const val FILE_NAME = "music.json"
     }
 }
